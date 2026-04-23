@@ -6,6 +6,15 @@ const { DatabaseSync } = require('node:sqlite');
 const twilio  = require('twilio');
 const ExcelJS = require('exceljs');
 
+// ── Env validation ─────────────────────────────────────────────────────────
+const REQUIRED = ['TWILIO_ACCOUNT_SID', 'TWILIO_AUTH_TOKEN', 'TWILIO_VERIFY_SERVICE_SID'];
+const missing  = REQUIRED.filter(k => !process.env[k]);
+if (missing.length) {
+  console.error('ERROR: Missing environment variables:', missing.join(', '));
+  process.exit(1);
+}
+console.log('Env check OK — SID starts with:', process.env.TWILIO_VERIFY_SERVICE_SID.slice(0, 6));
+
 // ── App setup ──────────────────────────────────────────────────────────────
 const app = express();
 app.use(express.json());
