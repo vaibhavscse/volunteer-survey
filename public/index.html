@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Volunteer Survey</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:       #4F46E5;
+      --primary-dark:  #4338CA;
+      --success-bg:    #ECFDF5;
+      --success-text:  #065F46;
+      --success-border:#A7F3D0;
+      --error-bg:      #FEF2F2;
+      --error-text:    #991B1B;
+      --error-border:  #FECACA;
+      --info-bg:       #EFF6FF;
+      --info-text:     #1E40AF;
+      --info-border:   #BFDBFE;
+      --bg:            #F1F5F9;
+      --card:          #FFFFFF;
+      --border:        #E2E8F0;
+      --text:          #1E293B;
+      --muted:         #64748B;
+      --radius:        12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 48px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 16px 20px 14px;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(79,70,229,.35);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; }
+    header p  { font-size: .8rem; opacity: .82; margin-top: 2px; }
+
+    /* ── Layout ───────────────────────────────────────────────── */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 4px rgba(0,0,0,.07), 0 4px 20px rgba(0,0,0,.04);
+      overflow: hidden;
+    }
+    .card-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .card-header h2 {
+      font-size: .95rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-body { padding: 18px; }
+
+    /* ── Form controls ────────────────────────────────────────── */
+    .form-group { margin-bottom: 15px; }
+    .form-group:last-of-type { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: .85rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    label .req  { color: #EF4444; margin-left: 2px; }
+    label .opt  { color: var(--muted); font-weight: 400; font-size: .78rem; margin-left: 4px; }
+
+    input[type="text"],
+    input[type="tel"] {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--text);
+      background: #FAFAFA;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+      -webkit-appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="tel"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79,70,229,.13);
+      background: #fff;
+    }
+
+    #otp-input {
+      font-size: 1.6rem;
+      letter-spacing: .35em;
+      text-align: center;
+      font-weight: 700;
+      padding: 10px 8px;
+    }
+
+    .hint {
+      font-size: .76rem;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    /* ── Buttons ──────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 11px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, opacity .15s, transform .08s;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .btn:active:not(:disabled) { transform: scale(.97); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      width: 100%;
+      margin-top: 16px;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+
+    .btn-success {
+      background: #059669;
+      color: #fff;
+      flex: 1;
+    }
+    .btn-success:hover:not(:disabled) { background: #047857; }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      padding: 11px 16px;
+    }
+    .btn-ghost:hover:not(:disabled) { background: var(--bg); }
+
+    .btn-download {
+      background: #0EA5E9;
+      color: #fff;
+      padding: 8px 14px;
+      font-size: .82rem;
+      border-radius: 7px;
+      white-space: nowrap;
+    }
+    .btn-download:hover:not(:disabled) { background: #0284C7; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    /* ── OTP section ──────────────────────────────────────────── */
+    #otp-section {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border);
+    }
+    .otp-notice {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .otp-notice strong { color: var(--text); }
+
+    .resend-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: .8rem;
+      cursor: pointer;
+      padding: 4px 0;
+      margin-top: 8px;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .resend-btn:hover { text-decoration: underline; }
+    .resend-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* ── Status messages ──────────────────────────────────────── */
+    .status {
+      display: none;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: .875rem;
+      font-weight: 500;
+      margin-top: 14px;
+      line-height: 1.4;
+      animation: fadeSlide .2s ease;
+    }
+    .status.show  { display: block; }
+    .status-success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+    .status-error   { background: var(--error-bg);   color: var(--error-text);   border: 1px solid var(--error-border);   }
+    .status-info    { background: var(--info-bg);    color: var(--info-text);    border: 1px solid var(--info-border);    }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Badge ────────────────────────────────────────────────── */
+    .badge {
+      background: #EEF2FF;
+      color: var(--primary);
+      font-size: .73rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      min-width: 22px;
+      text-align: center;
+    }
+
+    /* ── Table ────────────────────────────────────────────────── */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .845rem;
+    }
+    thead th {
+      background: #F8FAFC;
+      padding: 9px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: .72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tbody td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover td { background: #FAFBFF; }
+    .td-muted { font-size: .78rem; color: var(--muted); }
+
+    /* ── Empty state ──────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 38px 20px;
+      color: var(--muted);
+    }
+    .empty-icon {
+      width: 44px; height: 44px;
+      margin: 0 auto 10px;
+      opacity: .35;
+    }
+    .empty-state p { font-size: .875rem; }
+
+    /* ── Spinner ──────────────────────────────────────────────── */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .55s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Volunteer Survey</h1>
+  <p>OTP-verified data collection</p>
+</header>
+
+<main>
+
+  <!-- ── Entry form card ─────────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <h2>New Entry</h2>
+    </div>
+    <div class="card-body">
+
+      <!-- Step 1: volunteer info -->
+      <div id="info-form">
+        <div class="form-group">
+          <label for="name">Full Name <span class="req">*</span></label>
+          <input type="text" id="name" placeholder="e.g. Vaibhav Srivastava" autocomplete="name" />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number <span class="req">*</span></label>
+          <input type="tel" id="phone" placeholder="(no spaces, e.g. +919876543210)" autocomplete="tel" inputmode="tel" />
+          <div class="hint">No spaces &mdash; country code followed immediately by number (e.g. +919876543210 for India, +14155552671 for US)</div>
+        </div>
+
+        <div class="form-group">
+          <label for="address">Address / Location <span class="opt">(optional)</span></label>
+          <input type="text" id="address" placeholder="e.g. 123 Main St, New York" autocomplete="street-address" />
+        </div>
+
+        <button class="btn btn-primary" id="send-otp-btn" onclick="sendOTP()">
+          Send OTP
+        </button>
+      </div>
+
+      <!-- Step 2: OTP verification (shown after OTP is sent) -->
+      <div id="otp-section" class="hidden">
+        <p class="otp-notice">
+          OTP sent to <strong id="otp-phone-display"></strong>.<br />
+          Ask the volunteer for the 6-digit code they just received.
+        </p>
+
+        <div class="form-group">
+          <label for="otp-input">OTP Code <span class="req">*</span></label>
+          <input
+            type="text"
+            id="otp-input"
+            placeholder="000000"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            autocomplete="one-time-code"
+          />
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-success" id="verify-btn" onclick="verifyOTP()">
+            Verify &amp; Save
+          </button>
+          <button class="btn btn-ghost" onclick="cancelOTP()">
+            Cancel
+          </button>
+        </div>
+
+        <button class="resend-btn" id="resend-btn" onclick="resendOTP()">
+          Resend OTP
+        </button>
+      </div>
+
+      <!-- Status message -->
+      <div id="status" class="status" role="alert"></div>
+    </div>
+  </div>
+
+  <!-- ── Saved entries card ──────────────────────────────────── -->
+  <div class="card">
+    <div class="card-header">
+      <h2>
+        Saved Entries
+        <span class="badge" id="entry-count">0</span>
+      </h2>
+      <button class="btn btn-download" onclick="downloadExcel()">
+        &#8595; Download Excel
+      </button>
+    </div>
+
+    <div id="empty-state" class="empty-state">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <p>No entries yet. Verify a volunteer to get started.</p>
+    </div>
+
+    <div class="table-wrapper hidden" id="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Verified At</th>
+          </tr>
+        </thead>
+        <tbody id="entries-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  // ── State ────────────────────────────────────────────────────
+  let pendingPhone   = '';
+  let pendingName    = '';
+  let pendingAddress = '';
+
+  // ── Send OTP ─────────────────────────────────────────────────
+  async function sendOTP() {
+    const name    = document.getElementById('name').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+
+    if (!name)  return showStatus('error', 'Please enter the volunteer\'s full name.');
+    if (!phone) return showStatus('error', 'Please enter a phone number.');
+    if (!phone.startsWith('+')) {
+      return showStatus('error', 'Phone number must start with + and country code (e.g. +14155552671).');
+    }
+
+    const btn = document.getElementById('send-otp-btn');
+    setLoading(btn, true, 'Sending OTP\u2026');
+
+    try {
+      const res  = await fetch('/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        pendingPhone   = phone;
+        pendingName    = name;
+        pendingAddress = address;
+
+        document.getElementById('otp-phone-display').textContent = phone;
+        document.getElementById('info-form').classList.add('hidden');
+        document.getElementById('otp-section').classList.remove('hidden');
+        document.getElementById('otp-input').value = '';
+        document.getElementById('otp-input').focus();
+        showStatus('info', 'OTP sent! Ask the volunteer for the 6-digit code they received via SMS.');
+      } else {
+        showStatus('error', data.error || 'Failed to send OTP. Please try again.');
+      }
+    } catch {
+      showStatus('error', 'Network error. Please check your connection and try again.');
+    } finally {
+      setLoading(btn, false, 'Send OTP');
+    }
+  }
+
+  // ── Verify OTP ───────────────────────────────────────────────
+  async function verifyOTP() {
+    const otp = document.getElementById('otp-input').value.trim();
+    if (!otp) return showStatus('error', 'Please enter the OTP code.');
+
+    const btn = document.getElementById('verify-btn');
+    setLoading(btn, true, 'Verifying\u2026');
+
+    try {
+      const res  = await fetch('/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name:    pendingName,
+          phone:   pendingPhone,
+          address: pendingAddress,
+          otp,
+        }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showStatus('success', '\u2713 Verified! Entry saved successfully.');
+        resetForm();
+        loadEntries();
+      } else {
+        showStatus('error', data.error || 'Verification failed. Please try again.');
+        document.getElementById('otp-input').value = '';
+        document.getElementById('otp-input').focus();
+      }
+    } catch {
+      showStatus('error', 'Network error. Please check your connection.');
+    } finally {
+      setLoading(btn, false, 'Verify & Save');
+    }
+  }
+
+  // ── Resend OTP ───────────────────────────────────────────────
+  async function resendOTP() {
+    const btn = document.getElementById('resend-btn');
+    btn.textContent = 'Sending\u2026';
+    btn.disabled = true;
+
+    try {
+      const res  = await fetch('/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: pendingPhone }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        showStatus('info', 'New OTP sent! Ask the volunteer for the updated code.');
+        document.getElementById('otp-input').value = '';
+        document.getElementById('otp-input').focus();
+      } else {
+        showStatus('error', data.error || 'Failed to resend OTP.');
+      }
+    } catch {
+      showStatus('error', 'Network error.');
+    } finally {
+      btn.textContent = 'Resend OTP';
+      btn.disabled = false;
+    }
+  }
+
+  // ── Cancel / Reset ───────────────────────────────────────────
+  function cancelOTP() {
+    document.getElementById('otp-section').classList.add('hidden');
+    document.getElementById('info-form').classList.remove('hidden');
+    hideStatus();
+    pendingPhone = pendingName = pendingAddress = '';
+  }
+
+  function resetForm() {
+    ['name', 'phone', 'address', 'otp-input'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('otp-section').classList.add('hidden');
+    document.getElementById('info-form').classList.remove('hidden');
+    pendingPhone = pendingName = pendingAddress = '';
+  }
+
+  // ── Status helpers ───────────────────────────────────────────
+  function showStatus(type, message) {
+    const el = document.getElementById('status');
+    el.className = 'status show status-' + type;
+    el.textContent = message;
+    if (type === 'success') setTimeout(hideStatus, 5000);
+  }
+
+  function hideStatus() {
+    document.getElementById('status').className = 'status';
+  }
+
+  function setLoading(btn, loading, text) {
+    btn.disabled = loading;
+    btn.innerHTML = loading
+      ? `<span class="spinner"></span>${text}`
+      : text;
+  }
+
+  // ── Load entries ─────────────────────────────────────────────
+  async function loadEntries() {
+    try {
+      const res     = await fetch('/entries');
+      const entries = await res.json();
+
+      const tbody      = document.getElementById('entries-tbody');
+      const emptyState = document.getElementById('empty-state');
+      const wrapper    = document.getElementById('table-wrapper');
+
+      document.getElementById('entry-count').textContent = entries.length;
+
+      if (entries.length === 0) {
+        emptyState.classList.remove('hidden');
+        wrapper.classList.add('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      wrapper.classList.remove('hidden');
+
+      tbody.innerHTML = entries.map((e, i) => `
+        <tr>
+          <td>${entries.length - i}</td>
+          <td>${esc(e.name)}</td>
+          <td>${esc(e.phone)}</td>
+          <td>${esc(e.address || '\u2014')}</td>
+          <td class="td-muted">${formatDate(e.verified_at)}</td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      console.error('Failed to load entries:', err);
+    }
+  }
+
+  // ── Download ─────────────────────────────────────────────────
+  function downloadExcel() {
+    window.location.href = '/download';
+  }
+
+  // ── Utilities ────────────────────────────────────────────────
+  function esc(str) {
+    const d = document.createElement('div');
+    d.appendChild(document.createTextNode(str));
+    return d.innerHTML;
+  }
+
+  function formatDate(iso) {
+    try {
+      return new Date(iso).toLocaleString(undefined, {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: '2-digit', minute: '2-digit',
+      });
+    } catch { return iso; }
+  }
+
+  // Boot
+  loadEntries();
+</script>
+
+</body>
+</html>
